@@ -70,172 +70,165 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with MyHomePageMixin {
   Widget build(BuildContext context) {
     ref.listen(permissionsProvider, (previous, next) {});
 
-    return Scaffold(
-      appBar: AppBar(title: const Text("Flutter YT")),
-      /*drawer: Drawer(
-        child: ListView(
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        log('didPop -> $didPop ');
+
+          await onPressedBack();
+
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text("Flutter YT")),
+        body: Column(
           children: <Widget>[
-            const DrawerHeader(
-              child: Center(
-                child: Text(
-                  'Flutter YT',
-                  textAlign: TextAlign.center,
-                ),
+            /*TextField(
+              enabled: false,
+              decoration: const InputDecoration(prefixIcon: Icon(Icons.search)),
+              controller: urlController,
+              keyboardType: TextInputType.url,
+              onSubmitted: (value) {
+                var url = Uri.parse(value);
+                if (url.scheme.isEmpty) {
+                  url = Uri.parse("https://www.google.com/search?q=$value");
+                }
+                webViewController?.loadUrl(urlRequest: URLRequest(url: url));
+              },
+            ),*/
+            Expanded(
+              child: Stack(
+                children: [
+                  InAppWebView(
+                    key: webViewKey,
+                    initialUrlRequest:
+                        URLRequest(url: Uri.parse("https://m.youtube.com")),
+                    initialOptions: options,
+                    pullToRefreshController: pullToRefreshController,
+                    onWebViewCreated: (controller) {
+                      webViewController = controller;
+                    },
+                    onLoadStart: (controller, url) {
+                      setState(() {
+                        this.url = url.toString();
+                        urlController.text = this.url;
+                      });
+                    },
+                    androidOnPermissionRequest:
+                        (controller, origin, resources) async {
+                      return PermissionRequestResponse(
+                          resources: resources,
+                          action: PermissionRequestResponseAction.GRANT);
+                    },
+                    shouldOverrideUrlLoading:
+                        (controller, navigationAction) async {
+                      var uri = navigationAction.request.url!;
+
+                      if (![
+                        "http",
+                        "https",
+                        "file",
+                        "chrome",
+                        "data",
+                        "javascript",
+                        "about"
+                      ].contains(uri.scheme)) {
+                        /*if (await canLaunch(url)) {
+                            // Launch the App
+                            await launch(
+                              url,
+                            );
+                            // and cancel the request
+                            return NavigationActionPolicy.CANCEL;
+                          }*/
+                      }
+
+                      return NavigationActionPolicy.ALLOW;
+                    },
+                    onLoadStop: (controller, url) async {
+                      pullToRefreshController.endRefreshing();
+                      setState(() {
+                        this.url = url.toString();
+                        urlController.text = this.url;
+                      });
+                    },
+                    onLoadError: (controller, url, code, message) {
+                      pullToRefreshController.endRefreshing();
+                    },
+                    onProgressChanged: (controller, progress) {
+                      if (progress == 100) {
+                        pullToRefreshController.endRefreshing();
+                      }
+                      setState(() {
+                        this.progress = progress / 100;
+                        urlController.text = this.url;
+                      });
+                    },
+                    onUpdateVisitedHistory: (controller, url, androidIsReload) {
+                      setState(() {
+                        this.url = url.toString();
+                        urlController.text = this.url;
+                      });
+                    },
+                    onConsoleMessage: (controller, consoleMessage) {
+                      print(consoleMessage);
+                    },
+                  ),
+                  progress < 1.0
+                      ? LinearProgressIndicator(value: progress)
+                      : Container(),
+                ],
               ),
             ),
-            Column(
-              children: <Widget>[
-                ListTile(
-                  leading: const Icon(Icons.download),
-                  title: const Text('Downloads Manager'),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const DownloadManager()));
-                  },
-                ),
-              ],
-            )
           ],
         ),
-      ),*/
-      body: Column(
-        children: <Widget>[
-          /*TextField(
-            enabled: false,
-            decoration: const InputDecoration(prefixIcon: Icon(Icons.search)),
-            controller: urlController,
-            keyboardType: TextInputType.url,
-            onSubmitted: (value) {
-              var url = Uri.parse(value);
-              if (url.scheme.isEmpty) {
-                url = Uri.parse("https://www.google.com/search?q=$value");
-              }
-              webViewController?.loadUrl(urlRequest: URLRequest(url: url));
-            },
-          ),*/
-          Expanded(
-            child: Stack(
-              children: [
-                InAppWebView(
-                  key: webViewKey,
-                  initialUrlRequest:
-                      URLRequest(url: Uri.parse("https://m.youtube.com")),
-                  initialOptions: options,
-                  pullToRefreshController: pullToRefreshController,
-                  onWebViewCreated: (controller) {
-                    webViewController = controller;
-                  },
-                  onLoadStart: (controller, url) {
-                    setState(() {
-                      this.url = url.toString();
-                      urlController.text = this.url;
-                    });
-                  },
-                  androidOnPermissionRequest:
-                      (controller, origin, resources) async {
-                    return PermissionRequestResponse(
-                        resources: resources,
-                        action: PermissionRequestResponseAction.GRANT);
-                  },
-                  shouldOverrideUrlLoading:
-                      (controller, navigationAction) async {
-                    var uri = navigationAction.request.url!;
-
-                    if (![
-                      "http",
-                      "https",
-                      "file",
-                      "chrome",
-                      "data",
-                      "javascript",
-                      "about"
-                    ].contains(uri.scheme)) {
-                      /*if (await canLaunch(url)) {
-                          // Launch the App
-                          await launch(
-                            url,
-                          );
-                          // and cancel the request
-                          return NavigationActionPolicy.CANCEL;
-                        }*/
-                    }
-
-                    return NavigationActionPolicy.ALLOW;
-                  },
-                  onLoadStop: (controller, url) async {
-                    pullToRefreshController.endRefreshing();
-                    setState(() {
-                      this.url = url.toString();
-                      urlController.text = this.url;
-                    });
-                  },
-                  onLoadError: (controller, url, code, message) {
-                    pullToRefreshController.endRefreshing();
-                  },
-                  onProgressChanged: (controller, progress) {
-                    if (progress == 100) {
-                      pullToRefreshController.endRefreshing();
-                    }
-                    setState(() {
-                      this.progress = progress / 100;
-                      urlController.text = this.url;
-                    });
-                    /*
-                    log('#########################################${YoutubeUtils().youtubeLinkDetectorRegex.hasMatch(this.url)}');
-                    log('#########################################${this.url}');*/
-                  },
-                  onUpdateVisitedHistory: (controller, url, androidIsReload) {
-                    setState(() {
-                      this.url = url.toString();
-                      urlController.text = this.url;
-                    });
-                  },
-                  onConsoleMessage: (controller, consoleMessage) {
-                    print(consoleMessage);
-                  },
-                ),
-                progress < 1.0
-                    ? LinearProgressIndicator(value: progress)
-                    : Container(),
-              ],
-            ),
-          ),
-        ],
-      ),
-      floatingActionButton: ref.watch(youtubeLinkObserverProvider(url)).when(
-        data: (url) {
-          if (url != null) {
-            return ref.watch(youtubeExposeVideoStreamDataProvider(url)).when(
-              data: (data) {
-                return FloatingActionButton(
-                  onPressed: () async {
-                    await showDownloadPage(data);
-                  },
-                  child: const Icon(Icons.download),
-                );
-                ;
-              },
-              error: (error, s) {
-                return const Center(child: Text('Something went wrong!'));
-              },
-              loading: () {
-                return const CircularProgressIndicator();
-              },
-            );
-          } else {
+        floatingActionButton: ref.watch(youtubeLinkObserverProvider(url)).when(
+          data: (url) {
+            if (url != null) {
+              return ref.watch(youtubeExposeVideoStreamDataProvider(url)).when(
+                data: (data) {
+                  return FloatingActionButton(
+                    onPressed: () async {
+                      await showDownloadPage(data);
+                    },
+                    child: const Icon(Icons.download),
+                  );
+                  ;
+                },
+                error: (error, s) {
+                  return const Center(child: Text('Something went wrong!'));
+                },
+                loading: () {
+                  return const CircularProgressIndicator();
+                },
+              );
+            } else {
+              return null;
+            }
+          },
+          error: (error, s) {
             return null;
-          }
-        },
-        error: (error, s) {
-          return null;
-        },
-        loading: () {
-          return const CircularProgressIndicator();
-        },
+          },
+          loading: () {
+            return const CircularProgressIndicator();
+          },
+        ),
       ),
     );
+  }
+
+  Future<void> onPressedBack() async {
+    if (webViewController != null) {
+      await webViewController!.canGoBack().then((value) async {
+        if (value == true) {
+          webViewController!.goBack();
+        } else {
+          await showExitConfirmation().then((wantToQuit) {
+            if (wantToQuit == true) {
+              exit(0);
+            } else {}
+          });
+        }
+      });
+    } else {}
   }
 }
