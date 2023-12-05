@@ -1,5 +1,2 @@
-# flutter_yt_downloader
-
-A Flutter project.
-
+# Youtube Video Downloader by Flutter
 ## Readme Under Construction
