@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_yt_downloader/Services/utils.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -10,6 +11,7 @@ import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '../../Providers/permissions_providers.dart';
 import '../../Providers/yotube_link_observer.dart';
 import '../../Providers/youtube_expose_provider.dart';
+import '../../Services/flutter_local_notification_service.dart';
 import '../DownloadManagerPages/download_manager.dart';
 import '../DownloadUtilsPages/YT_download_options_page.dart';
 import 'my_home_page_mixins.dart';
@@ -75,11 +77,12 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with MyHomePageMixin {
       onPopInvoked: (didPop) async {
         log('didPop -> $didPop ');
 
-          await onPressedBack();
-
+        await onPressedBack();
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text("Flutter YT")),
+        appBar: AppBar(
+          title: const Text("Flutter YT"),
+        ),
         body: Column(
           children: <Widget>[
             /*TextField(
