@@ -27,17 +27,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with MyHomePageMixin {
   final GlobalKey webViewKey = GlobalKey();
 
   InAppWebViewController? webViewController;
-  InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
-      crossPlatform: InAppWebViewOptions(
-        useShouldOverrideUrlLoading: true,
-        mediaPlaybackRequiresUserGesture: false,
-      ),
-      android: AndroidInAppWebViewOptions(
-        useHybridComposition: true,
-      ),
-      ios: IOSInAppWebViewOptions(
-        allowsInlineMediaPlayback: true,
-      ));
+  late InAppWebViewGroupOptions options;
 
   late PullToRefreshController pullToRefreshController;
   String url = "";
@@ -47,6 +37,22 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with MyHomePageMixin {
   @override
   void initState() {
     super.initState();
+
+    initializeAddFilters();
+
+    options = InAppWebViewGroupOptions(
+      crossPlatform: InAppWebViewOptions(
+        useShouldOverrideUrlLoading: true,
+        mediaPlaybackRequiresUserGesture: false,
+        contentBlockers: contentBlockers,
+      ),
+      android: AndroidInAppWebViewOptions(
+        useHybridComposition: true,
+      ),
+      ios: IOSInAppWebViewOptions(
+        allowsInlineMediaPlayback: true,
+      ),
+    );
 
     pullToRefreshController = PullToRefreshController(
       options: PullToRefreshOptions(
@@ -98,13 +104,15 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with MyHomePageMixin {
                 webViewController?.loadUrl(urlRequest: URLRequest(url: url));
               },
             ),*/
+
             Expanded(
               child: Stack(
                 children: [
                   InAppWebView(
                     key: webViewKey,
-                    initialUrlRequest:
-                        URLRequest(url: Uri.parse("https://m.youtube.com")),
+                    initialUrlRequest: URLRequest(
+                      url: Uri.parse("https://m.youtube.com"),
+                    ),
                     initialOptions: options,
                     pullToRefreshController: pullToRefreshController,
                     onWebViewCreated: (controller) {
@@ -119,8 +127,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with MyHomePageMixin {
                     androidOnPermissionRequest:
                         (controller, origin, resources) async {
                       return PermissionRequestResponse(
-                          resources: resources,
-                          action: PermissionRequestResponseAction.GRANT);
+                        resources: resources,
+                        action: PermissionRequestResponseAction.GRANT,
+                      );
                     },
                     shouldOverrideUrlLoading:
                         (controller, navigationAction) async {
