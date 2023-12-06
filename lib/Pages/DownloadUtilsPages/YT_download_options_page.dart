@@ -2,15 +2,11 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_yt_downloader/Services/utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-import '../../Providers/yotube_link_observer.dart';
 import '../../Providers/youtube_expose_provider.dart';
-import '../DownloadManagerPages/download_manager.dart';
 import 'YT_download_progress_page.dart';
 
 class YTDownloadOptionsPage extends ConsumerStatefulWidget {
