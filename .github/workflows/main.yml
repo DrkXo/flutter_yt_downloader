@@ -61,4 +61,4 @@ jobs:
           name: Release ${{ steps.version-string.outputs.VERSION_STR }}
           prerelease: ${{ contains(github.ref, '-alpha') || contains(github.ref, '-beta') }}
           tag: ${{ steps.version-string.outputs.VERSION_STR }}
-          token: ${{ secrets.CI_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
