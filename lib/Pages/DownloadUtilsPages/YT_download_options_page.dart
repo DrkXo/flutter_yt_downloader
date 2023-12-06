@@ -102,6 +102,9 @@ class _YTDownloadOptionsPageState extends ConsumerState<YTDownloadOptionsPage> {
                         Navigator.pop(context);
                         await showModalBottomSheet(
                             context: context,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
                             builder: (context) => DownloadProgressWidget(
                                   ytManifest: widget.ytManifest,
                                   video: widget.video,

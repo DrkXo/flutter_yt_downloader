@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'Pages/HomePages/my_home_page.dart';
 import 'Providers/youtube_expose_provider.dart';
+import 'Services/flutter_local_notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +30,9 @@ Future<void> main() async {
     await AndroidInAppWebViewController.setWebContentsDebuggingEnabled(false);
   }
   log('InAppWebView Initialization Finished....');
+
+  // Local Notification
+  await FlutterLocalNotificationService().init();
 
   runApp(
     ProviderScope(
