@@ -15,7 +15,7 @@ class DownloadManager extends ConsumerStatefulWidget {
 }
 
 class _DownloadManagerState extends ConsumerState<DownloadManager> {
-  ReceivePort _port = ReceivePort();
+  final ReceivePort _port = ReceivePort();
 
   @override
   void initState() {
