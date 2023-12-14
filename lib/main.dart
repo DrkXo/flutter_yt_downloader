@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'Pages/HomePages/my_home_page.dart';
-import 'Providers/youtube_expose_provider.dart';
+import 'Routes/my_home_page.dart';
+import 'Riverpod Providers/youtube_expose_provider.dart';
 import 'Services/flutter_local_notification_service.dart';
 
 Future<void> main() async {

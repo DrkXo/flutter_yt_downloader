@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_yt_downloader/Services/utils.dart';
+import 'package:flutter_yt_downloader/Utility/yt_downloader_utils.dart';
 
 final youtubeLinkObserverProvider =
     FutureProvider.family((ref, String? url) async {

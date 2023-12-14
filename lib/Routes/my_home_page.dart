@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../Providers/permissions_providers.dart';
-import '../../Providers/yotube_link_observer.dart';
-import '../../Providers/youtube_expose_provider.dart';
-import 'my_home_page_mixins.dart';
+import '../Mixins/my_home_page_mixin.dart';
+import '../Riverpod Providers/permissions_providers.dart';
+import '../Riverpod Providers/yotube_link_observer.dart';
+import '../Riverpod Providers/youtube_expose_provider.dart';
 
 class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key});
@@ -176,7 +176,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with MyHomePageMixin {
                       });
                     },
                     onConsoleMessage: (controller, consoleMessage) {
-                      print(consoleMessage);
+                      log('$consoleMessage');
                     },
                   ),
                   progress < 1.0
@@ -194,7 +194,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> with MyHomePageMixin {
                 data: (data) {
                   return FloatingActionButton(
                     onPressed: () async {
-                      await showDownloadPage(data);
+                      log('Found Youtube URL !');
                     },
                     child: const Icon(Icons.download),
                   );

@@ -1,8 +1,6 @@
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
-import '../DownloadUtilsPages/YT_download_options_page.dart';
-import 'my_home_page.dart';
+import '../Routes/my_home_page.dart';
 import 'package:flutter/material.dart';
 
 mixin MyHomePageMixin on State<MyHomePage> {
@@ -43,15 +41,7 @@ mixin MyHomePageMixin on State<MyHomePage> {
             selector: ".banner, .banners, .ads, .ad, .advert")));
   }
 
-  Future<void> showDownloadPage(
-      ({StreamManifest streamManifest, Video videoData}) data) async {
-    await showModalBottomSheet(
-        context: context,
-        builder: (context) => YTDownloadOptionsPage(
-              ytManifest: data.streamManifest,
-              video: data.videoData,
-            ));
-  }
+  
 
   Future<bool> showExitConfirmation() async {
     bool value = await showDialog(

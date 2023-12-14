@@ -1,12 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:flutter_yt_downloader/Services/utils.dart';
+import 'package:flutter_yt_downloader/Utility/yt_downloader_utils.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 import '../Models/download_item_model.dart';
-
-
 
 class DownloadHelperService {
   final YoutubeExplode ytXpose;

@@ -1,6 +1,3 @@
-
-
-
 enum DownloadTaskStatus {
   /// Status of the task is either unknown or corrupted.
   undefined,
@@ -22,28 +19,6 @@ enum DownloadTaskStatus {
 
   /// The task was paused and can be resumed
   paused;
-
-  /// Creates a new [DownloadTaskStatus] from an [int].
-  factory DownloadTaskStatus.fromInt(int value) {
-    switch (value) {
-      case 0:
-        return DownloadTaskStatus.undefined;
-      case 1:
-        return DownloadTaskStatus.enqueued;
-      case 2:
-        return DownloadTaskStatus.running;
-      case 3:
-        return DownloadTaskStatus.complete;
-      case 4:
-        return DownloadTaskStatus.failed;
-      case 5:
-        return DownloadTaskStatus.canceled;
-      case 6:
-        return DownloadTaskStatus.paused;
-      default:
-        throw ArgumentError('Invalid value: $value');
-    }
-  }
 }
 
 class DownloadingTaskModel {
@@ -72,9 +47,6 @@ class DownloadingTaskModel {
 
   /// Whether downloads can use cellular data
   final bool allowCellular;
-
-
-
 
 //<editor-fold desc="Data Methods">
   const DownloadingTaskModel({
@@ -135,6 +107,4 @@ class DownloadingTaskModel {
       allowCellular: map['allowCellular'] as bool,
     );
   }*/
-
-//</editor-fold>
 }
