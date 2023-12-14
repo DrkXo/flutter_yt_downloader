@@ -1,7 +1,5 @@
 import 'dart:developer';
 import 'dart:io';
-
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_yt_downloader/Services/utils.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 

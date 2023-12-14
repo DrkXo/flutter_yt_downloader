@@ -1,4 +1,50 @@
-import 'package:flutter_downloader/flutter_downloader.dart';
+
+
+
+enum DownloadTaskStatus {
+  /// Status of the task is either unknown or corrupted.
+  undefined,
+
+  /// The task is scheduled, but is not running yet.
+  enqueued,
+
+  /// The task is in progress.
+  running,
+
+  /// The task has completed successfully.
+  complete,
+
+  /// The task has failed.
+  failed,
+
+  /// The task was canceled and cannot be resumed.
+  canceled,
+
+  /// The task was paused and can be resumed
+  paused;
+
+  /// Creates a new [DownloadTaskStatus] from an [int].
+  factory DownloadTaskStatus.fromInt(int value) {
+    switch (value) {
+      case 0:
+        return DownloadTaskStatus.undefined;
+      case 1:
+        return DownloadTaskStatus.enqueued;
+      case 2:
+        return DownloadTaskStatus.running;
+      case 3:
+        return DownloadTaskStatus.complete;
+      case 4:
+        return DownloadTaskStatus.failed;
+      case 5:
+        return DownloadTaskStatus.canceled;
+      case 6:
+        return DownloadTaskStatus.paused;
+      default:
+        throw ArgumentError('Invalid value: $value');
+    }
+  }
+}
 
 class DownloadingTaskModel {
   /// Creates a new [DownloadingTaskModel].
