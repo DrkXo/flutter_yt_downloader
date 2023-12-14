@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
+
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,14 +16,6 @@ Future<void> main() async {
   // await Permission.camera.request();
   // await Permission.microphone.request();
   // await Permission.storage.request();
-
-  // Plugin must be initialized before using
-  await FlutterDownloader.initialize(
-      debug:
-          true, // optional: set to false to disable printing logs to console (default: true)
-      ignoreSsl:
-          true // option: set to false to disable working with http links (default: false)
-      );
 
   log('Initializing InAppWebView....');
   if (Platform.isAndroid) {
