@@ -111,3 +111,97 @@ class DownloadHelperService {
     );
   }
 }
+
+Future<void> download(String url) async {
+  final yt = YoutubeExplode();
+
+  // Get video metadata.
+  final YtVideo = await yt.videos.get(url);
+
+  // Get the video manifest.
+  final manifest = await yt.videos.streamsClient.getManifest(url);
+  final streams = manifest.videoOnly;
+
+  // Get the audio track with the highest bitrate.
+  final audio = streams.first;
+  final audioStream = yt.videos.streamsClient.get(audio);
+
+  // Get the audio track with the highest bitrate.
+  final video = streams.last;
+  final viedoStream = yt.videos.streamsClient.get(audio);
+
+  // Compose the file name removing the unallowed characters in windows.
+
+  final audioFileName =
+      '${YtVideo.title}.${audio.container.name}'.cleanUpYoutubeVideoTitle;
+
+  final videoFileName =
+      '${YtVideo.title}.${video.container.name}'.cleanUpYoutubeVideoTitle;
+
+  final audioFile = File(
+      '/storage/emulated/0/Download/[${audio.qualityLabel}]Audio_$audioFileName');
+
+  final videoFile = File(
+      '/storage/emulated/0/Download/[${video.qualityLabel}]Video_$videoFileName');
+
+  // Delete the file if exists.
+  if (audioFile.existsSync()) {
+    audioFile.deleteSync();
+  }
+
+  // Delete the file if exists.
+  if (videoFile.existsSync()) {
+    videoFile.deleteSync();
+  }
+
+  // Open the file in writeAppend.
+  final outputAudioFile = audioFile.openWrite(mode: FileMode.writeOnlyAppend);
+
+  final outputVideoFile = videoFile.openWrite(mode: FileMode.writeOnlyAppend);
+
+  // Track the file download status.
+  final len = audio.size.totalBytes;
+  var count = 0;
+
+  // Create the message and set the cursor position.
+  final msg = 'Downloading Audio ${YtVideo.title}.${audio.container.name}';
+  log(msg);
+
+  // Listen for data received.
+  await for (final data in audioStream) {
+    // Keep track of the current downloaded data.
+    count += data.length;
+
+    // Calculate the current progress.
+    final progress = ((count / len) * 100).ceil();
+
+    log(progress.toStringAsFixed(2));
+
+    // Write to file.
+    outputAudioFile.add(data);
+  }
+  await outputAudioFile.close();
+
+  // Track the file download status.
+  final len1 = video.size.totalBytes;
+  var count1 = 0;
+
+  // Create the message and set the cursor position.
+  final msg1 = 'Downloading Video ${YtVideo.title}.${audio.container.name}';
+  log(msg1);
+
+  // Listen for data received.
+  await for (final data in viedoStream) {
+    // Keep track of the current downloaded data.
+    count1 += data.length;
+
+    // Calculate the current progress.
+    final progress = ((count1 / len1) * 100).ceil();
+
+    log(progress.toStringAsFixed(2));
+
+    // Write to file.
+    outputVideoFile.add(data);
+  }
+  await outputVideoFile.close();
+}

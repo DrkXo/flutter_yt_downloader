@@ -1,14 +1,9 @@
-import 'dart:developer';
-import 'dart:io';
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../Mixins/my_home_page_mixin.dart';
-import '../Riverpod Providers/permissions_providers.dart';
-import '../Riverpod Providers/yotube_link_observer.dart';
-import '../Riverpod Providers/youtube_expose_provider.dart';
+import 'package:flutter_yt_downloader/Routes/downloads.dart';
+import 'package:flutter_yt_downloader/Routes/yt_web_view.dart';
 
 class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key});
@@ -17,223 +12,67 @@ class MyHomePage extends ConsumerStatefulWidget {
   ConsumerState<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends ConsumerState<MyHomePage> with MyHomePageMixin {
-  final GlobalKey webViewKey = GlobalKey();
+class _MyHomePageState extends ConsumerState<MyHomePage>
+    with TickerProviderStateMixin {
+  late TabController controller;
 
-  InAppWebViewController? webViewController;
-  late InAppWebViewGroupOptions options;
-
-  late PullToRefreshController pullToRefreshController;
-  String url = "";
-  double progress = 0;
-  final urlController = TextEditingController();
+  late final ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
-
-    initializeAddFilters();
-
-    options = InAppWebViewGroupOptions(
-      crossPlatform: InAppWebViewOptions(
-        useShouldOverrideUrlLoading: true,
-        mediaPlaybackRequiresUserGesture: false,
-        contentBlockers: contentBlockers,
-      ),
-      android: AndroidInAppWebViewOptions(
-        useHybridComposition: true,
-      ),
-      ios: IOSInAppWebViewOptions(
-        allowsInlineMediaPlayback: true,
-      ),
-    );
-
-    pullToRefreshController = PullToRefreshController(
-      options: PullToRefreshOptions(
-        color: Colors.blue,
-      ),
-      onRefresh: () async {
-        if (Platform.isAndroid) {
-          webViewController?.reload();
-        } else if (Platform.isIOS) {
-          webViewController?.loadUrl(
-              urlRequest: URLRequest(url: await webViewController?.getUrl()));
-        }
-      },
-    );
+    _scrollController = ScrollController();
+    controller = TabController(length: 2, vsync: this);
   }
 
   @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(permissionsProvider, (previous, next) {});
-
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (didPop) async {
-        log('didPop -> $didPop ');
-
-        await onPressedBack();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Flutter YT"),
-        ),
-        body: Column(
-          children: <Widget>[
-            /*TextField(
-              enabled: false,
-              decoration: const InputDecoration(prefixIcon: Icon(Icons.search)),
-              controller: urlController,
-              keyboardType: TextInputType.url,
-              onSubmitted: (value) {
-                var url = Uri.parse(value);
-                if (url.scheme.isEmpty) {
-                  url = Uri.parse("https://www.google.com/search?q=$value");
-                }
-                webViewController?.loadUrl(urlRequest: URLRequest(url: url));
-              },
-            ),*/
-
-            Expanded(
-              child: Stack(
-                children: [
-                  InAppWebView(
-                    key: webViewKey,
-                    initialUrlRequest: URLRequest(
-                      url: Uri.parse("https://m.youtube.com"),
-                    ),
-                    initialOptions: options,
-                    pullToRefreshController: pullToRefreshController,
-                    onWebViewCreated: (controller) {
-                      webViewController = controller;
-                    },
-                    onLoadStart: (controller, url) {
-                      setState(() {
-                        this.url = url.toString();
-                        urlController.text = this.url;
-                      });
-                    },
-                    androidOnPermissionRequest:
-                        (controller, origin, resources) async {
-                      return PermissionRequestResponse(
-                        resources: resources,
-                        action: PermissionRequestResponseAction.GRANT,
-                      );
-                    },
-                    shouldOverrideUrlLoading:
-                        (controller, navigationAction) async {
-                      var uri = navigationAction.request.url!;
-
-                      if (![
-                        "http",
-                        "https",
-                        "file",
-                        "chrome",
-                        "data",
-                        "javascript",
-                        "about"
-                      ].contains(uri.scheme)) {
-                        /*if (await canLaunch(url)) {
-                            // Launch the App
-                            await launch(
-                              url,
-                            );
-                            // and cancel the request
-                            return NavigationActionPolicy.CANCEL;
-                          }*/
-                      }
-
-                      return NavigationActionPolicy.ALLOW;
-                    },
-                    onLoadStop: (controller, url) async {
-                      pullToRefreshController.endRefreshing();
-                      setState(() {
-                        this.url = url.toString();
-                        urlController.text = this.url;
-                      });
-                    },
-                    onLoadError: (controller, url, code, message) {
-                      pullToRefreshController.endRefreshing();
-                    },
-                    onProgressChanged: (controller, progress) {
-                      if (progress == 100) {
-                        pullToRefreshController.endRefreshing();
-                      }
-                      setState(() {
-                        this.progress = progress / 100;
-                        urlController.text = url;
-                      });
-                    },
-                    onUpdateVisitedHistory: (controller, url, androidIsReload) {
-                      setState(() {
-                        this.url = url.toString();
-                        urlController.text = this.url;
-                      });
-                    },
-                    onConsoleMessage: (controller, consoleMessage) {
-                      log('$consoleMessage');
-                    },
+    return Scaffold(
+      body: NestedScrollView(
+          controller: _scrollController,
+          physics: AlwaysScrollableScrollPhysics(),
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                SliverAppBar(
+                  snap: false,
+                  pinned: true,
+                  floating: true, //this make the work done.
+                  title: const Text(
+                    'Wanderer',
                   ),
-                  progress < 1.0
-                      ? LinearProgressIndicator(value: progress)
-                      : Container(),
-                ],
-              ),
-            ),
-          ],
-        ),
-        floatingActionButton: ref.watch(youtubeLinkObserverProvider(url)).when(
-          data: (url) {
-            if (url != null) {
-              return ref.watch(youtubeExposeVideoStreamDataProvider(url)).when(
-                data: (data) {
-                  return FloatingActionButton(
-                    onPressed: () async {
-                      log('Found Youtube URL !');
-                    },
-                    child: const Icon(Icons.download),
-                  );
-                },
-                error: (error, s) {
-                  return const Center(child: Text('Something went wrong!'));
-                },
-                loading: () {
-                  return const CircularProgressIndicator();
-                },
-              );
-            } else {
-              return null;
-            }
-          },
-          error: (error, s) {
-            return null;
-          },
-          loading: () {
-            return const CircularProgressIndicator();
-          },
-        ),
-      ),
+                  actions: const [
+                    IconButton(
+                      onPressed: null,
+                      icon: Icon(
+                        Icons.more_vert,
+                      ),
+                    ),
+                  ],
+                  bottom: TabBar(
+                    controller: controller,
+                    tabs: [
+                      Tab(
+                        text: 'Browse',
+                      ),
+                      Tab(
+                        text: 'Downloads',
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+          body: TabBarView(
+            controller: controller,
+            children: [
+              YtWebView(),
+              Downloads(),
+            ],
+          )),
     );
-  }
-
-  Future<void> onPressedBack() async {
-    if (webViewController != null) {
-      await webViewController!.canGoBack().then((value) async {
-        if (value == true) {
-          webViewController!.goBack();
-        } else {
-          await showExitConfirmation().then((wantToQuit) {
-            if (wantToQuit == true) {
-              exit(0);
-            } else {}
-          });
-        }
-      });
-    } else {}
   }
 }

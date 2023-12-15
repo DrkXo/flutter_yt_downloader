@@ -1,9 +1,10 @@
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-import '../Routes/my_home_page.dart';
 import 'package:flutter/material.dart';
 
-mixin MyHomePageMixin on State<MyHomePage> {
+import '../Routes/yt_web_view.dart';
+
+mixin YtWebViewMixin on State<YtWebView> {
   // list of ad URL filters to be used to block ads from loading
   final adUrlFilters = [
     ".*.doubleclick.net/.*",
@@ -21,6 +22,24 @@ mixin MyHomePageMixin on State<MyHomePage> {
     ".*.outbrain.com/.*"
   ];
   final List<ContentBlocker> contentBlockers = [];
+
+
+    /*TextField(
+              enabled: false,
+              decoration: const InputDecoration(prefixIcon: Icon(Icons.search)),
+              controller: urlController,
+              keyboardType: TextInputType.url,
+              onSubmitted: (value) {
+                var url = Uri.parse(value);
+                if (url.scheme.isEmpty) {
+                  url = Uri.parse("https://www.google.com/search?q=$value");
+                }
+                webViewController?.loadUrl(urlRequest: URLRequest(url: url));
+              },
+            ),*/
+
+
+
 
   void initializeAddFilters() {
     for (final adUrlFilter in adUrlFilters) {
@@ -68,4 +87,7 @@ mixin MyHomePageMixin on State<MyHomePage> {
     ).then((value) => value ?? false);
     return value;
   }
+
+
+  
 }
